@@ -1,36 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import {Space, Card, Input, List, Typography, Image } from "antd"
+import {Space, Card, Input, List, Typography, Image, Avatar } from "antd"
 import './App.css';
+import { Author } from './types';
+import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 const { Search } = Input;
-
-export interface Pokedex {
-  products: Product[];
-  total:    number;
-  skip:     number;
-  limit:    number;
-}
-
-export interface Product {
-  id:                 number;
-  title:              string;
-  description:        string;
-  price:              number;
-  discountPercentage: number;
-  rating:             number;
-  stock:              number;
-  brand:              string;
-  category:           string;
-  thumbnail:          string;
-  images:             string[];
-}
 
 
 
 const App: React.FC = () => {
   const [seachedText,setSeachedText] = useState("")
   const [loading,setLoading] = useState(false)
-  const [dataSource,setDataSource] = useState<Product[]>([])
+  const [dataSource,setDataSource] = useState<Author[]>([])
   const [previewImages,setPreviewImages] = useState<string[]>([])
+  const [dataCount, setDataCount] = useState<number>(10)
 
   useEffect(()=>{
     // API
@@ -40,11 +22,14 @@ const App: React.FC = () => {
   const asyncGetCall = async () => {
     try {
       setLoading(true)
-         const response = await fetch(`https://dummyjson.com/products/search?q=${seachedText}`) ;
-         const data = await response.json();
+        //  const response = await fetch(`https://dummyjson.com/products/search?q=${seachedText}`) ;
+         const response = await fetch(`http://localhost:8002/api/v1/adoc/10/1`) ;
+         const data_all = await response.json();
         // enter you logic when the fetch is successful
-         const { products } = data
-         setDataSource(products)
+         const { data } = data_all
+         setDataCount(data_all?.count)
+         setDataSource(data)
+         console.log(data)
          setLoading(false)
        } catch(error) {
           // enter your logic for when there is an error (ex. error toast)
@@ -63,7 +48,7 @@ const App: React.FC = () => {
      >
       <Typography.Title
       style={{textAlign: "center",fontFamily:"monospace"}}
-      > My Gallery
+      > Поиск по отчетам
       </Typography.Title>
       <Space
         style={{maxWidth: 500, display:'flex', margin:'auto'}}
@@ -75,7 +60,7 @@ const App: React.FC = () => {
           allowClear
           // onSearch={(value)=>{ setSeachedText(value) }}
         />
-        <Typography.Text >Поиск для: <Typography.Text strong>{seachedText||"Все"}</Typography.Text> </Typography.Text>
+        <Typography.Text >Поиск для: <Typography.Text strong>{seachedText||"Все"} и показано {dataCount}</Typography.Text> </Typography.Text>
       </Space>
 
       <List
@@ -96,38 +81,25 @@ const App: React.FC = () => {
               hoverable
               style={{height:300, margin: 12, overflow:"hidden"}}
               key={item?.id}
-              title={item?.title}
+              title={item?.author_name}
+              actions={[
+                <SettingOutlined key="setting" />,
+                <EditOutlined key="edit" />,
+                <EllipsisOutlined key="ellipsis" />,
+              ]}
             >
-              <Image
-                src={item?.thumbnail}
-                preview={{visible:false}}
-                onClick={()=>{
-                setPreviewImages(item.images)
-                }}
-              ></Image>
+            <Card.Meta
+                avatar={item?.year_str}
+                title={item?.territory_name}
+                description={item?.report_name}
+            />
+
+            {/* </Card.Meta> */}
             </Card>
           </List.Item>
         )}
       ></List>
-      {
-        previewImages.length > 0
-        ?<Image.PreviewGroup
-          preview={{
-            visible: (previewImages.length?true:false),
-            onVisibleChange:(value)=>{
-            if(!value){
-              setPreviewImages([])
-            }
-          }}}
-          // onVisibleChange: (value)
-          >
-          {previewImages.map(
-            (image)=>{
-              return <Image src={image}></Image>
-            })}
-          </Image.PreviewGroup>
-      : null
-      }
+
       </Space>
     </>
   );
