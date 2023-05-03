@@ -1,2 +1,3 @@
 # ADoc-frontend
-React App front-end for ADoc project 
+antd react front-end app (cards, search)
+
