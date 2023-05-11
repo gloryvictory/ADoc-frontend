@@ -3,6 +3,8 @@ import {Space, Card, Input, List, Typography, Image, Avatar, Button } from "antd
 import './App.css';
 import { Author } from './types';
 import { EnvironmentOutlined, ExceptionOutlined, FolderOpenOutlined, LinkOutlined  } from '@ant-design/icons';
+import CardDetail from './CardDetail';
+
 const { Search } = Input;
 const { Text, Paragraph } = Typography;
 
@@ -15,8 +17,10 @@ const App: React.FC = () => {
   // const [previewImages,setPreviewImages] = useState<string[]>([])
   const [dataCount, setDataCount] = useState<number>(10)
   const [dataCountAll, setDataCountAll] = useState<number>(0)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [idCurrent, setIdCurrent] = useState<number>(0)
 
-  useEffect(()=>{
+   useEffect(()=>{
     // API
     asyncGet()
     asyncGetcCountAll()
@@ -62,6 +66,13 @@ const App: React.FC = () => {
 
   const onSearch = (value: string)=>{ setSeachedText(value) }
 
+  // const showModal = () => { setIsModalOpen(true);};
+  const showModal = (id:number ) => { console.log(id); setIdCurrent(id); setIsModalOpen(true);};
+
+  const handleOk = () => {  setIsModalOpen(false); };
+
+  const handleCancel = () => {setIsModalOpen(false); };
+
 
   return (
     <>
@@ -88,13 +99,13 @@ const App: React.FC = () => {
       <List
         style={{maxWidth: 800}}
         loading={loading}
-        dataSource={dataSource.filter((item) => {
-          return seachedText.toLowerCase() === ''
-            ? item
-            : item?.report_name.toLowerCase().includes(seachedText);
-        })}
-        header={<div><Typography.Text >Поиск для: <Typography.Text strong>{seachedText||"Все"} и показано {dataCount}</Typography.Text> </Typography.Text>
-        </div>}
+        dataSource={dataSource}
+        // dataSource={dataSource.filter((item) => {
+        //   return seachedText.toLowerCase() === ''
+        //     ? item
+        //     : item?.report_name.toLowerCase().includes(seachedText);
+        // })}
+        header={<div><Typography.Text >Поиск для: <Typography.Text strong>{seachedText||"Все"} и показано {dataCount}</Typography.Text> </Typography.Text> </div>}
 
         footer={<div>{`Показано ${dataCount} из ${dataCountAll}`} </div>}
         grid={{
@@ -116,7 +127,7 @@ const App: React.FC = () => {
               actions={[
                 // <SettingOutlined key="setting" />,
                 // <EditOutlined key="edit" />,
-                <Button type="link">Подробнее...</Button>
+                <Button type="link" onClick={()=>{showModal(item?.id)}} >Подробнее...</Button>
                 // <a key="list-loadmore-more">Подробнее...</a>
                 // <EllipsisOutlined key="ellipsis" />,
               ]}
@@ -192,6 +203,7 @@ const App: React.FC = () => {
       ></List>
 
       </Space>
+      <CardDetail id={idCurrent} isModalOpen={isModalOpen} onOk={handleOk} onCancel={handleCancel}/>
     </>
   );
 }
