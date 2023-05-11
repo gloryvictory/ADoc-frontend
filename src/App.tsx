@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {Space, Card, Input, List, Typography, Image, Avatar, Button } from "antd"
 import './App.css';
 import { Author } from './types';
-import { EditOutlined, EllipsisOutlined, EnvironmentOutlined, ExceptionOutlined, FolderOpenOutlined, LinkOutlined, SettingOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, ExceptionOutlined, FolderOpenOutlined, LinkOutlined  } from '@ant-design/icons';
 const { Search } = Input;
 const { Text, Paragraph } = Typography;
 
@@ -12,7 +12,7 @@ const App: React.FC = () => {
   const [seachedText,setSeachedText] = useState("")
   const [loading,setLoading] = useState(false)
   const [dataSource,setDataSource] = useState<Author[]>([])
-  const [previewImages,setPreviewImages] = useState<string[]>([])
+  // const [previewImages,setPreviewImages] = useState<string[]>([])
   const [dataCount, setDataCount] = useState<number>(10)
   const [dataCountAll, setDataCountAll] = useState<number>(0)
 
@@ -88,20 +88,24 @@ const App: React.FC = () => {
       <List
         style={{maxWidth: 800}}
         loading={loading}
-        dataSource={dataSource}
+        dataSource={dataSource.filter((item) => {
+          return seachedText.toLowerCase() === ''
+            ? item
+            : item?.report_name.toLowerCase().includes(seachedText);
+        })}
         header={<div><Typography.Text >Поиск для: <Typography.Text strong>{seachedText||"Все"} и показано {dataCount}</Typography.Text> </Typography.Text>
         </div>}
 
         footer={<div>{`Показано ${dataCount} из ${dataCountAll}`} </div>}
-        // grid={{
-        //   gutter: 16,
-        //   xs: 1,
-        //   sm: 2,
-        //   md: 4,
-        //   lg: 4,
-        //   xl: 5,
-        //   xxl: 6,
-        // }}
+        grid={{
+          gutter: 16,
+          xs: 1,
+          sm: 1,
+          md: 1,
+          lg: 1,
+          xl: 1,
+          xxl: 1,
+        }}
         renderItem={(item) => (
           <List.Item>
             <Card
