@@ -14,6 +14,8 @@ const App: React.FC = () => {
   const [seachedText,setSeachedText] = useState("")
   const [loading,setLoading] = useState(false)
   const [dataSource,setDataSource] = useState<Author[]>([])
+  const [cAuthor,setCurrentAuthor] = useState<Author|undefined>(undefined)
+
   // const [previewImages,setPreviewImages] = useState<string[]>([])
   const [dataCount, setDataCount] = useState<number>(10)
   const [dataCountAll, setDataCountAll] = useState<number>(0)
@@ -67,8 +69,8 @@ const App: React.FC = () => {
   const onSearch = (value: string)=>{ setSeachedText(value) }
 
   // const showModal = () => { setIsModalOpen(true);};
-  const showModal = (id:number ) => { console.log(id); setIdCurrent(id); setIsModalOpen(true);};
-
+  const showModal = (curAuthor:Author ) => { setCurrentAuthor(curAuthor); setIsModalOpen(true);};
+  // setIdCurrent(id);
   const handleOk = () => {  setIsModalOpen(false); };
 
   const handleCancel = () => {setIsModalOpen(false); };
@@ -127,7 +129,7 @@ const App: React.FC = () => {
               actions={[
                 // <SettingOutlined key="setting" />,
                 // <EditOutlined key="edit" />,
-                <Button type="link" onClick={()=>{showModal(item?.id)}} >Подробнее...</Button>
+                <Button type="link" onClick={()=>{showModal(item)}} >Подробнее...</Button>
                 // <a key="list-loadmore-more">Подробнее...</a>
                 // <EllipsisOutlined key="ellipsis" />,
               ]}
@@ -203,7 +205,7 @@ const App: React.FC = () => {
       ></List>
 
       </Space>
-      <CardDetail id={idCurrent} isModalOpen={isModalOpen} onOk={handleOk} onCancel={handleCancel}/>
+      <CardDetail cAuthor={cAuthor} isModalOpen={isModalOpen} onOk={handleOk} onCancel={handleCancel}/>
     </>
   );
 }

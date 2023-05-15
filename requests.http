@@ -8,3 +8,7 @@ Content-type: application/json
 
 ###
 GET http://localhost:8983/solr/#/files/query?q=*:*&q.op=OR&indent=true&useParams=
+
+
+###
+GET http://localhost:8002/api/v1/adoc/9917
